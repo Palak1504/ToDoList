@@ -1,0 +1,69 @@
+<div class="container">
+  <div class="row mt-3">
+    <form #form="ngForm">
+      <h1>Add ToDos</h1>
+      <div class="form-group">
+        <div class="row">
+          <div class="col-6">
+            <input type="text" name="Keyword" [(ngModel)]="Keyword" (keypress)="getAllTodos($event)"
+              (keyup.backspace)="getAllTodos($event)" class="form-control" id="Keyword" placeholder="Enter Description">
+          </div>
+          <!-- <div class="col-3">
+            <button type="Search" class="btn btn-primary mt-2" (click)="getAllTodos($event)">Search</button>
+          </div> -->
+          <div class="col-3">
+            <button type="submit" class="btn btn-primary mt-2" (click)="popup()">Add +</button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="row">
+    <h1>My Todos</h1>
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">Description</th>
+          <th scope="col">Created DateTime</th>
+          <th scope="col">Completed</th>
+          <th scope="col">Complete DateTime</th>
+          <th scope="col">Time Taken</th>
+          <th scope="col">Delete</th>
+          <th scope="col">Edit</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let todo of todos">
+          <td *ngIf="!todo.isEdit" [ngStyle]="{'text-decoration': todo.isCompleted?'line-through' :'none'}">
+            {{todo.description}}</td>
+          <td *ngIf="todo.isEdit"><input type="text" [(ngModel)]="todo.description" class="strike"></td>
+          <td>{{todo.createdDate|date :'MM/dd/yyyy HH:mm:ss'}}</td>
+          <td><input type="checkbox" [(ngModel)]="todo.isCompleted" (change)="onCompleted(todo)"></td>
+          <td>{{todo.completedDate|date :'MM/dd/yyyy HH:mm:ss'}}</td>
+          <td>{{todo.timeTaken}}</td>
+          <td><i class="pi pi-trash" style="font-size: 1.5em !important;" (click)="onDelete(todo.id)"></i></td>
+          <td *ngIf="!todo.isEdit">
+            <p-button (click)="onSave(todo)" class="p-button-danger" icon="pi pi-pencil" label="Edit"> </p-button>
+          </td>
+          <td *ngIf="todo.isEdit">
+            <p-button (click)="onSave(todo)" icon="pi pi-check" label="Save"></p-button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<p-dialog header="Add Todos" [modal]="true" [(visible)]="isPopup" [style]="{ width: '25rem' }">
+  <span class="p-text-secondary block mb-5">Add your information.</span>
+  <div class="flex align-items-center gap-3 mb-3">
+    <label for="description" class="font-semibold w-6rem">Description</label>
+    <input pInputText id="description" class="flex-auto" autocomplete="off" [(ngModel)]="newtodo.description" />
+  </div>
+  <div class="flex justify-content-end gap-2">
+    <p-button label="Cancel" severity="secondary" (onClick)="isPopup = false" />
+    <p-button label="Save" (onClick)="addToDo()" />
+  </div>
+</p-dialog>
+
+<p-toast></p-toast>
+<p-confirmDialog [visible]="confirmDialog"></p-confirmDialog>
